@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Bunga</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav>
+        <h1>Bunga Tunggal dan Majemuk</h1>
+    </nav>
+    <section>
+        <form id="kalkulatorForm" onsubmit="return false;">
+            <label for="modal">Modal awal</label><br>
+            <input type="text" name="modal" id="modal"><br>
+            <label for="bunga">Bunga (%)</label><br>
+            <input type="text" name="bunga" id="bunga"><br>
+            <label for="lama">Bulan / Tahun</label><br>
+            <select name="lama" id="lama" onchange="changeLabel(this)">
+                <option value="1">Bulan</option>
+                <option value="3">Tahun</option>
+            </select>
+            <div id="ganti_text">
+                <label for="peri">Pilih Periode</label>
+                <select name="peri" id="peri" onchange="changePeriod(this)">
+                    <option value="bul">Bulan</option>
+                    <option value="tri">Triwulan</option>
+                    <option value="ctur">Caturwulan</option>
+                    <option value="semes">Semester</option>
+                </select>
+            </div>
+            <label id="label_waktu" for="waktu">Lama Pinjaman (Bulan)</label><br>
+            <input type="number" name="waktu" id="waktu"><br>
+            <label for="type">Pilih Bunga</label><br>
+            <select name="type" id="type">
+                <option value="2">Tunggal</option>
+                <option value="4">Majemuk</option>
+            </select><br><br>
+            <button type="button" onclick="hitungModal()">Hitung</button>
+        </form>
+
+        <div id="hasil">
+            <h2>Hasil Perhitungan:</h2>
+            <p id="output"></p>
+        </div>
+    </section>
+
+    <script>
+        function changeLabel(g) {
+            let gantiText = document.getElementById("ganti_text");
+            let tahunBaru = document.getElementById("label_waktu");
+            if (g.value == "3") {
+                gantiText.style.display = "none";
+                tahunBaru.innerHTML = "Lama Pinjaman (Tahun)";
+            } else {
+                gantiText.style.display = "block";
+                tahunBaru.innerHTML = "Lama Pinjaman (Bulan)";
+            }
+        }
+
+        function changePeriod(p) {
+            let labelWaktu = document.getElementById("label_waktu");
+            if (p.value == "tri") {
+                labelWaktu.innerHTML = "Lama Pinjaman (Triwulan)";
+            } else if (p.value == "ctur") {
+                labelWaktu.innerHTML = "Lama Pinjaman (Caturwulan)";
+            } else if (p.value == "semes") {
+                labelWaktu.innerHTML = "Lama Pinjaman (Semester)";
+            } else {
+                labelWaktu.innerHTML = "Lama Pinjaman (Bulan)";
+            }
+        }
+
+        function hitungModal() {
+            // Mengambil nilai input
+            const modalAwal = parseFloat(document.getElementById("modal").value);
+            const bunga = parseFloat(document.getElementById("bunga").value) / 100;
+            const waktu = parseInt(document.getElementById("waktu").value);
+            const type = document.getElementById("type").value;
+
+            let modalAkhir = 0;
+            let totalBunga = 0;
+
+            // Validasi input
+            if (isNaN(modalAwal) || isNaN(bunga) || isNaN(waktu)) {
+                document.getElementById("output").innerHTML = "Mohon masukkan nilai yang valid untuk modal awal, bunga, dan waktu.";
+                return;
+            }
+
+            // Perhitungan Modal Akhir dan Bunga Berdasarkan tipe bunga
+            if (type == "2") { // Bunga Tunggal
+                totalBunga = modalAwal * bunga * waktu;
+                modalAkhir = modalAwal + totalBunga;
+            } else if (type == "4") { // Bunga Majemuk
+                modalAkhir = modalAwal * Math.pow((1 + bunga), waktu);
+                totalBunga = modalAkhir - modalAwal;
+            }
+
+            // Menampilkan hasil Modal Awal, Modal Akhir, dan Bunga
+            document.getElementById("output").innerHTML = `
+                Modal Awal: Rp ${modalAwal.toFixed(2)}<br>
+                Modal Akhir: Rp ${modalAkhir.toFixed(2)}<br>
+                Total Bunga: Rp ${totalBunga.toFixed(2)}
+            `;
+        }
+    </script>
+</body>
+
+</html>
